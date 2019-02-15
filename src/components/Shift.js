@@ -23,8 +23,8 @@ class Shift extends Component {
         <center>
           <Select
             autoWidth={true}
-            displayEmpty onClick={updateShiftValue} value={shift}>
-            <MenuItem value="">Enter shift amount</MenuItem>
+            displayEmpty onClick={updateShiftValue} value={shift !== -1 ? shift : 'Enter shift amount'}>
+            <MenuItem value="Enter shift amount">Enter shift amount</MenuItem>
             {this.generateShiftValues()}
           </Select>
         </center>

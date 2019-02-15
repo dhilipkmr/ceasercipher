@@ -16,7 +16,7 @@ class Main extends Component {
   }
 
   updateShiftValue = (e) => {
-    if (e.target.value) {
+    if (typeof(e.target.value) === 'number') {
       this.setState({ shift: e.target.value, plainText: '', cipherText: '' });
     }
   }
