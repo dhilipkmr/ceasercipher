@@ -3,6 +3,18 @@ import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 
 class Plaintext extends Component {
+  constructor(props){
+    super(props);
+    this.MAX_SHIFT_SIZE = 100;
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(e) {
+    if(this.props.updatePlainText) {
+      this.props.updatePlainText(e);
+    }
+  }
+
   render() {
     const { updatePlainText = () => null, plainText=''} = this.props;
     return (
@@ -14,7 +26,7 @@ class Plaintext extends Component {
             rowsMax="10"
             margin="normal"
             placeholder="Enter plaintext"
-            onChange={updatePlainText}
+            onChange={this.onChange}
             value={plainText}
           />
         </center>

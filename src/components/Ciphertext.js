@@ -4,6 +4,18 @@ import TextField from '@material-ui/core/TextField';
 
 
 class Ciphertext extends Component {
+  constructor(props){
+    super(props);
+    this.MAX_SHIFT_SIZE = 100;
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(e) {
+    if(this.props.updateCipherText) {
+      this.props.updateCipherText(e);
+    }
+  }
+
   render() {
     const { updateCipherText = () => null, cipherText=''} = this.props;
     return (
@@ -15,7 +27,7 @@ class Ciphertext extends Component {
             rowsMax="10"
             margin="normal"
             placeholder="Enter ciphertext"
-            onChange={updateCipherText}
+            onChange={this.onChange}
             value={cipherText}
           />
         </center>

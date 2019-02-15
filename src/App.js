@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 class Main extends Component {
   constructor(props) {
     super(props);
+    this.updateShiftValue = this.updateShiftValue.bind(this);
     this.alphabets = 'abcdefghijklmnopqrstuvwxyz';
     this.state = {
       shift: -1,
@@ -15,9 +16,10 @@ class Main extends Component {
     }
   }
 
-  updateShiftValue = (e) => {
-    if (typeof(e.target.value) === 'number') {
-      this.setState({ shift: e.target.value, plainText: '', cipherText: '' });
+  updateShiftValue(e) {
+    const val = parseInt(e.target.value, 10);
+    if (val && typeof(val) === 'number') {
+      this.setState({ shift: val, plainText: '', cipherText: '' });
     }
   }
 
@@ -30,53 +32,30 @@ class Main extends Component {
       this.setState({ plainText: '', cipherText: '' });
       return;
     }
-    /*If the value is deleted */
-    if (val && val.length < this.state[textType].length) {
-      let newPlain = val, newCipher = val;
-      if (isPlainText) {                                                // Updating Plain text
-        newCipher = cipherText.substring(0, cipherText.length - 1);
-      } else if (isCipherText) {                                        // Updating Cipher text
-        newPlain = plainText.substring(0, plainText.length - 1);
-      }
-      this.setState({ plainText: newPlain, cipherText: newCipher });
-      return;
-    }
-  
-    /* Condition to check if the current change is a new character */
-    if (val && val.length > this.state[textType].length) {
-      let newPlain = val, newCipher = val;
-      if (isPlainText) {                                                // Updating Plain text
-        const prevCipherText = cipherText;
-        const newTextKey = val.length === 1 ? val : val.substring(val.length - 1);
-        const keyIndex = this.alphabets.indexOf(newTextKey);
-        const caseKeyIndex = this.alphabets.indexOf(newTextKey.toLowerCase());
-        if (newTextKey === ' ' || keyIndex !== -1 || caseKeyIndex !== -1) {
-          const cipheredIndex = (caseKeyIndex + shift) % 26;
-          if (keyIndex === -1 && caseKeyIndex !== -1) {
-            newCipher = prevCipherText + this.alphabets[cipheredIndex].toUpperCase();
-          } else {
-            newCipher = prevCipherText + (newTextKey === ' ' ? ' ' : this.alphabets[cipheredIndex]);
-          }
-          this.setState({ plainText: newPlain, cipherText: newCipher });
+    let result = '', newVal = '';
+    for(let i = 0; i < val.length; i++) {
+      const keyIndex = this.alphabets.indexOf(val[i]);
+      const caseKeyIndex = this.alphabets.indexOf(val[i].toLowerCase());
+      if (val[i] === ' ' || keyIndex !== -1 || caseKeyIndex !== -1) {
+        let newIndex = isPlainText ? (caseKeyIndex + shift) % 26 : (caseKeyIndex - shift) % 26;
+        if (newIndex < 0) {
+          newIndex = 26 - (Math.abs(newIndex));
         }
-      } else if (isCipherText) {                                        // Updating Cipher text
-        const prevPlainText = plainText;
-        const newCipherKey = val.length === 1 ? val : val.substring(val.length - 1);
-        const keyIndex = this.alphabets.indexOf(newCipherKey);
-        const caseKeyIndex = this.alphabets.indexOf(newCipherKey.toLowerCase());
-        if (newCipherKey === ' ' || keyIndex !== -1 || caseKeyIndex !== -1) {      
-          const newIndex = (caseKeyIndex - shift);
-          const plainIndex = (newIndex < 0 ? 26 - Math.abs(newIndex) :  newIndex % 26);
-          if (keyIndex === -1 && caseKeyIndex !== -1) {
-            newPlain = prevPlainText + this.alphabets[plainIndex].toUpperCase();
-          } else {
-            newPlain = prevPlainText + (newCipherKey === ' ' ? ' ' : this.alphabets[plainIndex]);
-          }
-          this.setState({ plainText: newPlain, cipherText: newCipher });
+        const modifiedIndex = newIndex;
+        if (keyIndex === -1 && caseKeyIndex !== -1) {
+          newVal = this.alphabets[modifiedIndex].toUpperCase();
+        } else {
+          newVal = (val[i] === ' ' ? ' ' : this.alphabets[modifiedIndex]);
         }
+        result = result + newVal;
       }
-      return;
     }
+    if (isPlainText) {                                                // Updating Plain text
+      this.setState({ plainText: val, cipherText: result });
+    } else {
+      this.setState({ plainText: result, cipherText: val });
+    }
+    return;
   }
 
   updatePlainText = (e) => {
