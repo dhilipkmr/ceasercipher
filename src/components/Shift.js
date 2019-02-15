@@ -10,7 +10,7 @@ class Shift extends Component {
   }
   generateShiftValues = () => {
     const options = [];
-    for(let i = 0; i <= this.MAX_SHIFT_SIZE; i++) {
+    for(let i = 1; i <= this.MAX_SHIFT_SIZE; i++) {
       options.push(<MenuItem key={i} value={i}>{i}</MenuItem>)
     }
     return options;

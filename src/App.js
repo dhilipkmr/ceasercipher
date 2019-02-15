@@ -9,7 +9,7 @@ class Main extends Component {
     super(props);
     this.alphabets = 'abcdefghijklmnopqrstuvwxyz';
     this.state = {
-      shift: '',
+      shift: -1,
       plainText: '',
       cipherText: ''
     }
@@ -49,19 +49,29 @@ class Main extends Component {
         const prevCipherText = cipherText;
         const newTextKey = val.length === 1 ? val : val.substring(val.length - 1);
         const keyIndex = this.alphabets.indexOf(newTextKey);
-        if (newTextKey === ' ' || keyIndex !== -1) {              
-          const cipheredIndex = (keyIndex + shift) % 26;
-          newCipher = prevCipherText + (newTextKey === ' ' ? ' ' : this.alphabets[cipheredIndex]);
+        const caseKeyIndex = this.alphabets.indexOf(newTextKey.toLowerCase());
+        if (newTextKey === ' ' || keyIndex !== -1 || caseKeyIndex !== -1) {
+          const cipheredIndex = (caseKeyIndex + shift) % 26;
+          if (keyIndex === -1 && caseKeyIndex !== -1) {
+            newCipher = prevCipherText + this.alphabets[cipheredIndex].toUpperCase();
+          } else {
+            newCipher = prevCipherText + (newTextKey === ' ' ? ' ' : this.alphabets[cipheredIndex]);
+          }
           this.setState({ plainText: newPlain, cipherText: newCipher });
         }
       } else if (isCipherText) {                                        // Updating Cipher text
         const prevPlainText = plainText;
         const newCipherKey = val.length === 1 ? val : val.substring(val.length - 1);
         const keyIndex = this.alphabets.indexOf(newCipherKey);
-        if (newCipherKey === ' ' || keyIndex !== -1) {      
-          const newIndex = (keyIndex - shift);
+        const caseKeyIndex = this.alphabets.indexOf(newCipherKey.toLowerCase());
+        if (newCipherKey === ' ' || keyIndex !== -1 || caseKeyIndex !== -1) {      
+          const newIndex = (caseKeyIndex - shift);
           const plainIndex = (newIndex < 0 ? 26 - Math.abs(newIndex) :  newIndex % 26);
-          newPlain = prevPlainText + (newCipherKey === ' ' ? ' ' : this.alphabets[plainIndex]);
+          if (keyIndex === -1 && caseKeyIndex !== -1) {
+            newPlain = prevPlainText + this.alphabets[plainIndex].toUpperCase();
+          } else {
+            newPlain = prevPlainText + (newCipherKey === ' ' ? ' ' : this.alphabets[plainIndex]);
+          }
           this.setState({ plainText: newPlain, cipherText: newCipher });
         }
       }
